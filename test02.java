@@ -114,5 +114,19 @@ public class FindBugsLauncher {
      * @return
      * @throws IOException
      */
+    private byte[] buildFakePluginJar() throws IOException {
+        ClassLoader cl = getClass().getClassLoader();
 
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        JarOutputStream jar = new JarOutputStream(buffer);
+
+        //Add files to the jar stream
+        for (String resource : Arrays.asList("findbugs.xml", "messages.xml", "META-INF/MANIFEST.MF")) {
+            jar.putNextEntry(new ZipEntry(resource));
+            jar.write(IOUtils.toByteArray(cl.getResourceAsStream("metadata/" + resource)));
+        }
+        jar.finish();
+
+        return buffer.toByteArray();
+    }
 }
