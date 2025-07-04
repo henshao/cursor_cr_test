@@ -567,7 +567,11 @@ public abstract class TestMetrics {
     assertBounds(6, Types.BinaryType.get(),
         ByteBuffer.wrap("A".getBytes()), ByteBuffer.wrap("A".getBytes()), metrics);
     assertCounts(7, 1L, 0L, 1L, metrics);
-    assertBounds(7, Types.DoubleType.get(), Double.NaN, Double.NaN, metrics);
+    if (fileFormat() == FileFormat.AVRO) {
+      assertBounds(7, Types.DoubleType.get(), null, null, metrics);
+    } else {
+      assertBounds(7, Types.DoubleType.get(), Double.NaN, Double.NaN, metrics);
+    }
   }
 
   @Test

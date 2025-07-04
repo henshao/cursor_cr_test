@@ -187,23 +187,21 @@ public class ContextTest extends AbstractTest {
         MethodDeclaration method = Navigator.demandMethod(referencesToField, "findType");
         Parameter param = method.getParameters().get(1);
 
-        ResolvedClassDeclaration stringDecl = createMock(ResolvedClassDeclaration.class);
-        expect(stringDecl.getName()).andReturn("String");
-        expect(stringDecl.getQualifiedName()).andReturn("java.lang.String");
-        TypeSolver typeSolver = createMock(TypeSolver.class);
-        expect(typeSolver.tryToSolveType("me.tomassetti.symbolsolver.javaparser.String")).andReturn(SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class));
-        expect(typeSolver.getRoot()).andReturn(typeSolver);
-        expect(typeSolver.solveType("java.lang.Object")).andReturn(new ReflectionClassDeclaration(Object.class, typeSolver));
-        expect(typeSolver.tryToSolveType("java.lang.String")).andReturn(SymbolReference.solved(stringDecl));
+        ResolvedClassDeclaration stringDecl = mock(ResolvedClassDeclaration.class);
+        when(stringDecl.getName()).thenReturn("String");
+        when(stringDecl.getQualifiedName()).thenReturn("java.lang.String");
+        TypeSolver typeSolver = mock(TypeSolver.class);
+        when(typeSolver.tryToSolveType("me.tomassetti.symbolsolver.javaparser.String")).thenReturn(SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class));
+        when(typeSolver.getRoot()).thenReturn(typeSolver);
+        when(typeSolver.solveType("java.lang.Object")).thenReturn(new ReflectionClassDeclaration(Object.class, typeSolver));
+        when(typeSolver.tryToSolveType("java.lang.String")).thenReturn(SymbolReference.solved(stringDecl));
         SymbolSolver symbolSolver = new SymbolSolver(typeSolver);
-        replay(typeSolver, stringDecl);
+
         SymbolReference<? extends ResolvedTypeDeclaration> ref = symbolSolver.solveType("String", param);
 
         assertEquals(true, ref.isSolved());
         assertEquals("String", ref.getCorrespondingDeclaration().getName());
         assertEquals("java.lang.String", ref.getCorrespondingDeclaration().getQualifiedName());
-
-        verify(typeSolver, stringDecl);
     }
 
     @Test

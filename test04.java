@@ -1,5 +1,7 @@
 package cn.exrick.manager.pojo;
 
+import java.util.Objects;
+
 public class TbAddress {
     private Long addressId;
 
@@ -59,5 +61,12 @@ public class TbAddress {
 
     public void setIsDefault(Boolean isDefault) {
         this.isDefault = isDefault;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        TbAddress that = (TbAddress) o;
+        return Objects.equals(addressId, that.addressId);
     }
 }

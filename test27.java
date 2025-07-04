@@ -80,7 +80,7 @@ public class DelegatingReactiveMessageService implements ReactiveMessageService 
 	}
 
 	@Override
-	@PostAuthorize("returnObject?.contains(authentication?.name)")
+	@PostAuthorize("@authz.containsAuthenticationName(returnObject, authentication?.name)")
 	public Flux<String> fluxPostAuthorizeFindById(
 			long id) {
 		return delegate.fluxPostAuthorizeFindById(id);
