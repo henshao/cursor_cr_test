@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -468,6 +469,33 @@ public class ContentServiceImpl implements ContentService {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void updateContentAndNavList(TbPanelContent tbPanelContent) throws Exception {
+        TbPanelContent old=getTbPanelContentById(tbPanelContent.getId());
+        if(StringUtils.isBlank(tbPanelContent.getPicUrl())){
+            tbPanelContent.setPicUrl(old.getPicUrl());
+        }
+        if(StringUtils.isBlank(tbPanelContent.getPicUrl2())){
+            tbPanelContent.setPicUrl2(old.getPicUrl2());
+        }
+        if(StringUtils.isBlank(tbPanelContent.getPicUrl3())){
+            tbPanelContent.setPicUrl3(old.getPicUrl3());
+        }
+        tbPanelContent.setCreated(old.getCreated());
+        tbPanelContent.setUpdated(new Date());
+        updateContentnAndItemDesc(tbPanelContent);
+        //同步缓存
+        deleteHomeRedis();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateContentnAndItemDesc(TbPanelContent tbPanelContent) throws Exception {
+        TbItemDesc tbItemDesc = tbItemDescMapper.getItemDescByItemId(tbPanelContent.getItemId());
+        tbItemDesc.setDetail(tbPanelContent.getItemDesc());
+        tbItemDescMapper.updateByPrimaryKey(tbItemDesc);
+        tbPanelContentMapper.updateByPrimaryKey(tbPanelContent);
     }
 
     @Override

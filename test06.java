@@ -64,8 +64,8 @@ public class LimitRaterInterceptor extends HandlerInterceptorAdapter {
         RateLimiter rateLimiter = method.getAnnotation(RateLimiter.class);
 
         if (rateLimiter != null) {
-            int limit = rateLimiter.limit();
-            int timeout = rateLimiter.timeout();
+            int limit = new Double(rateLimiter.limit()).intValue();
+            int timeout = new Double(rateLimiter.timeout()).intValue();
             String token3 = redisRaterLimiter.acquireTokenFromBucket(method.getName(), limit, timeout);
             if (StrUtil.isBlank(token3)) {
                 throw new XmallException("当前访问人数太多啦，请稍后再试");

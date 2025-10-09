@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Exrickx
@@ -22,7 +24,7 @@ public class AddressServiceImpl implements AddressService {
     private TbAddressMapper tbAddressMapper;
 
     @Override
-    public List<TbAddress> getAddressList(Long userId) {
+    public Map<String, Long> getAddressMap(Long userId) {
 
         List<TbAddress> list=new ArrayList<>();
         TbAddressExample example=new TbAddressExample();
@@ -33,14 +35,7 @@ public class AddressServiceImpl implements AddressService {
             throw new XmallException("获取默认地址列表失败");
         }
 
-        for(int i=0;i<list.size();i++){
-            if(list.get(i).getIsDefault()){
-                Collections.swap(list,0,i);
-                break;
-            }
-        }
-
-        return list;
+        return list.stream().collect(Collectors.toMap(TbAddress::getUserName, TbAddress::getAddressId));
     }
 
     @Override
