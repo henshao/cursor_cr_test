@@ -35,7 +35,11 @@ public class AddressServiceImpl implements AddressService {
             throw new XmallException("获取默认地址列表失败");
         }
 
-        return list.stream().collect(Collectors.toMap(TbAddress::getUserName, TbAddress::getAddressId));
+        return list.stream().collect(Collectors.toMap(
+            TbAddress::getUserName, 
+            TbAddress::getAddressId,
+            (existing, replacement) -> existing // Keep first occurrence in case of duplicate keys
+        ));
     }
 
     @Override

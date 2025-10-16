@@ -72,9 +72,9 @@ public class FindBugsLauncher {
             File f = new File(System.getProperty("java.io.tmpdir"), "plugin.jar");
             log.info("Writing " + f.getCanonicalPath());
             f.deleteOnExit();
-            FileOutputStream out = new FileOutputStream(f);
-            out.write(archive);
-            out.close();
+            try (FileOutputStream out = new FileOutputStream(f)) {
+                out.write(archive);
+            }
 
             loadedPlugin = Plugin.loadCustomPlugin(f.toURL(), project);
         }
@@ -118,14 +118,14 @@ public class FindBugsLauncher {
         ClassLoader cl = getClass().getClassLoader();
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        JarOutputStream jar = new JarOutputStream(buffer);
-
-        //Add files to the jar stream
-        for (String resource : Arrays.asList("findbugs.xml", "messages.xml", "META-INF/MANIFEST.MF")) {
-            jar.putNextEntry(new ZipEntry(resource));
-            jar.write(IOUtils.toByteArray(cl.getResourceAsStream("metadata/" + resource)));
+        try (JarOutputStream jar = new JarOutputStream(buffer)) {
+            //Add files to the jar stream
+            for (String resource : Arrays.asList("findbugs.xml", "messages.xml", "META-INF/MANIFEST.MF")) {
+                jar.putNextEntry(new ZipEntry(resource));
+                jar.write(IOUtils.toByteArray(cl.getResourceAsStream("metadata/" + resource)));
+            }
+            jar.finish();
         }
-        jar.finish();
 
         return buffer.toByteArray();
     }

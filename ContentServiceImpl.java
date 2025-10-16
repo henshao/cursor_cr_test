@@ -31,7 +31,7 @@ import java.util.List;
 @Service
 public class ContentServiceImpl implements ContentService {
 
-    private final static Logger log= LoggerFactory.getLogger(PanelServiceImpl.class);
+    private final static Logger log = LoggerFactory.getLogger(ContentServiceImpl.class);
 
     @Autowired
     private TbPanelMapper tbPanelMapper;
