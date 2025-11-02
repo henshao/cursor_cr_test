@@ -66,7 +66,13 @@ public class TbAddress {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         TbAddress that = (TbAddress) o;
         return Objects.equals(addressId, that.addressId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(addressId);
     }
 }
